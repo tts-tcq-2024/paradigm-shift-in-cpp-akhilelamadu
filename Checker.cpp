@@ -24,11 +24,18 @@ uint8_t batteryState(bool temperatureOk, bool socOk, bool chargeRateOk) {
   return temperatureOk&&socOk&&chargeRateOk;
 }
 
-void printBatteryHealth(float temperature, float soc, float chargeRate)
-{
-    if (!checkTemp(temperature)) cout << "Temperature out of range!\n";
-    if (!checkSoc(soc)) cout << "State of Charge out of range!\n";
-    if (!checkChargeRate(chargeRate)) cout << "Charge Rate out of range!\n";
+// Helper function to print error messages
+void printErrorMessage(bool condition, const string& message) {
+    if (!condition) {
+        cout << message << "\n";
+    }
+}
+
+// Function to print battery health
+void printBatteryHealth(float temperature, float soc, float chargeRate) {
+    printErrorMessage(checkTemp(temperature), "Temperature out of range!");
+    printErrorMessage(checkSoc(soc), "State of Charge out of range!");
+    printErrorMessage(checkChargeRate(chargeRate), "Charge Rate out of range!");
 }
 
 bool batteryIsOk(float temperature, float soc, float chargeRate)
@@ -51,7 +58,4 @@ int main() {
   assert(batteryIsOk(50, 85, 0)     == false);
   
   return 0;
-  
- 
-  
 }
