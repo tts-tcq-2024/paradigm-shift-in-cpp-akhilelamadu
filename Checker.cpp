@@ -2,60 +2,62 @@
 #include <iostream>
 using namespace std;
 
-//---Range Checkers(purefunctions)---//
-uint8_t checkTemp(float temperature)
+class BatteryMon
 {
-    return (temperature < 0 || temperature > 45) ?0:1;
-}
-//purefunction
-uint8_t checkSoc(float soc)
-{
-    return (soc < 20 || soc > 80)?0:1;
-}
-//purefunction
-uint8_t checkChargeRate(float chargeRate)
-{
-    return (chargeRate > 0.8) ?0:1;
-}
-//------------------------------------//
+    public:
+        
+        BatteryMon(float f_temp, float f_soc, float f_ChargeRate):
+        m_Temp(f_temp),
+        m_SoC(f_soc),
+        m_ChargeRate(f_ChargeRate)
+        {
+            m_TempOk = checkTemp();
+            m_SoCOk = checkSoc();
+            m_ChargeRateOk = checkChargeRate();
+            m_BatteryHealth = m_TempOk && m_SoCOk && m_ChargeRateOk;
+            printBatteryHealth();
+        }
+        
+        //---Range Checkers(purefunctions)---//
+        uint8_t checkTemp()
+        {
+            return (m_Temp < 0 || m_Temp > 45) ?0:1;
+        }
 
-//---battery Health Checker(purefunction)---//
-uint8_t batteryState(bool temperatureOk, bool socOk, bool chargeRateOk) {
-  return temperatureOk&&socOk&&chargeRateOk;
-}
+        uint8_t checkSoc()
+        {
+            return (m_SoC < 20 || m_SoC > 80)?0:1;
+        }
+     
+        uint8_t checkChargeRate()
+        {
+            return (m_ChargeRate > 0.8) ?0:1;
+        }
+        //------------------------------------//
+        
+        // Helper function to print error messages
+        void printErrorMessage(bool condition, const string& message) {
+            if (!condition) {
+                cout << message << "\n";
+            }
+        }
+        
+        // Function to print battery health
+        void printBatteryHealth() {
+            printErrorMessage(m_TempOk, "Temperature out of range!");
+            printErrorMessage(m_SoCOk, "State of Charge out of range!");
+            printErrorMessage(m_ChargeRateOk, "Charge Rate out of range!");
+        }
+        
+        private:
+            bool m_TempOk, m_SoCOk, m_ChargeRateOk, m_BatteryHealth;
+            float m_Temp, m_SoC, m_ChargeRate;
+};
 
-// Helper function to print error messages
-void printErrorMessage(bool condition, const string& message) {
-    if (!condition) {
-        cout << message << "\n";
+
+int main()
+    {
+ 
+      BatteryMon new_var(50,85,0);
+      return 0;
     }
-}
-
-// Function to print battery health
-void printBatteryHealth(float temperature, float soc, float chargeRate) {
-    printErrorMessage(checkTemp(temperature), "Temperature out of range!");
-    printErrorMessage(checkSoc(soc), "State of Charge out of range!");
-    printErrorMessage(checkChargeRate(chargeRate), "Charge Rate out of range!");
-}
-
-bool batteryIsOk(float temperature, float soc, float chargeRate)
-{
-    bool TempState    =   checkTemp(temperature);
-    bool SocState     =   checkSoc(soc);
-    bool ChargeState  =   checkChargeRate(chargeRate);
-    
-    //return battery health(true or false)
-    return batteryState(TempState, SocState, ChargeState);
-}
-
-int main() {
-  
-  printBatteryHealth(25, 70, 0.7);
-  printBatteryHealth(50, 85, 0) ;
-  
-  
-  assert(batteryIsOk(25, 70, 0.7)   == true);
-  assert(batteryIsOk(50, 85, 0)     == false);
-  
-  return 0;
-}
