@@ -50,12 +50,25 @@ public:
     }
     //------------------------------------//
 
-    // Warning checker
-    bool checkWarning(float f_parameter, float f_minLimit, float f_maxLimit, float f_tolerance) const
-    {
-        return (f_parameter >= f_minLimit && f_parameter <= (f_minLimit + f_tolerance)) ||
-               (f_parameter >= (f_maxLimit - f_tolerance) && f_parameter <= f_maxLimit);
-    }
+    // Helper function to check if parameter is near the lower limit
+bool isNearLowerLimit(float f_parameter, float f_minLimit, float f_tolerance) const
+{
+    return (f_parameter >= f_minLimit && f_parameter <= (f_minLimit + f_tolerance));
+}
+
+// Helper function to check if parameter is near the upper limit
+bool isNearUpperLimit(float f_parameter, float f_maxLimit, float f_tolerance) const
+{
+    return (f_parameter >= (f_maxLimit - f_tolerance) && f_parameter <= f_maxLimit);
+}
+
+// Warning checker
+bool checkWarning(float f_parameter, float f_minLimit, float f_maxLimit, float f_tolerance) const
+{
+    return isNearLowerLimit(f_parameter, f_minLimit, f_tolerance) ||
+           isNearUpperLimit(f_parameter, f_maxLimit, f_tolerance);
+}
+
 
     // Helper function to print error messages
     void printErrorMessage(bool condition, const string& message)
